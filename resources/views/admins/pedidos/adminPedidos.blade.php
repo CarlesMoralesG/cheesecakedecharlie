@@ -49,6 +49,10 @@
     @include('partials.messagesLogin')
     <br>
     <div class="list">
+        <div>
+            <a class="btn btn-green" href="{{ route('descargarExcel') }}">Pedidos por hacer</a>
+        </div>
+        <br>
         <table class="table table-striped table-responsive-sm" id="PedidosList">
             <thead>
                 <tr>

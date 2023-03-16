@@ -58,6 +58,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <!-- Cerrar sesión -->
                   <a class="dropdown-item" href="{{ route('showProfile', encrypt(auth()->user()->id)) }}">Perfil</a>
+                  <a class="dropdown-item" href="{{ route('showPedidos', encrypt(auth()->user()->id)) }}">Pedidos</a>
                   <a class="dropdown-item" href="logout">Logout</a>
                 </div>
               </li>

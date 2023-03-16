@@ -63,6 +63,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <!-- Cerrar sesión -->
                                 <a class="dropdown-item" href="{{ route('showProfile', encrypt(auth()->user()->id)) }}">Perfil</a>
+                                <a class="dropdown-item" href="{{ route('showPedidos', encrypt(auth()->user()->id)) }}">Pedidos</a>
                                 <a class="dropdown-item" href="/cheesecakedecharlie/public/logout">Logout</a>
                             </div>
                             </li>
@@ -165,7 +166,8 @@
         $(function () {
             $("#datePicker").datepicker({
                 minDate: 7,
-                dateFormat: 'DD dd, MM yy',
+                //dateFormat: 'DD dd, MM yy',
+                dateFormat: 'd-m-yy',
                 firstDay: 1,
                 beforeShowDay: $.datepicker.noWeekends,
                 dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],

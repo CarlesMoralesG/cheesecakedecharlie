@@ -75,7 +75,10 @@ class CestaController extends Controller
     public function guardarCesta(Request $request)
     {
         $dataCesta = LineasPedido::where('IdLineaPedido', '=', $request->IdLineaPedido);
-        $dataGuardarCesta = $request->only('Cantidad');
+        $dataGuardarCesta = $request->only('Cantidad','Comentario');
+        $request->validate([
+            'Comentario' => 'max:180'  
+        ]);
         $dataCesta->update($dataGuardarCesta);
   
         return redirect()->route('showCesta', [encrypt(auth()->user()->id)])->with('success', '¡Se ha guardado la información correctamente!');

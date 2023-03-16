@@ -9,6 +9,10 @@ use App\Models\LineasPedido;
 use App\Models\Pedido;
 use App\Http\Request\RegisterRequest;
 use App\Http\Request\ArticuloRequest;
+use PHPExcel_IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
 
 class AdminController extends Controller
 {
@@ -43,13 +47,84 @@ class AdminController extends Controller
             return redirect()->to('/adminPedidos')->with('success', 'Pedido actualizado correctamente!');
         }
 
-
         // Eliminar un Pedido
         public function deletePedido(Request $request)
         {
             $eliminarLineasPedido = LineasPedido::where('IdPedido', $request->IdPedido)->delete();
             $eliminarPedido = Pedido::where('IdPedido', $request->IdPedido)->delete();
             return redirect()->to('/adminPedidos')->with('success', 'Pedido eliminado correctamente!');
+        }
+
+        // Descargar Excel
+        public function descargarExcel(Request $request)
+        {
+            $pedidos = Pedido::join('LineasPedido', 'Pedido.IdPedido', '=', 'LineasPedido.IdPedido')
+                                ->join('Articulos', 'Articulos.IdArticulos', '=', 'LineasPedido.IdArticulo')
+                                ->join('Categoria', 'Categoria.IdCategoria', '=', 'Articulos.IdCategoria')
+                                ->join('Usuarios', 'Usuarios.email', '=', 'Pedido.Correo')
+                                ->whereBetween('Pedido.FechaRecibirPedido', [date('d-m-Y'), date('d-m-Y', strtotime('+1 day'))])
+                                ->get();
+            
+            $excel = new Spreadsheet();
+
+            // Seleccionar la hoja de trabajo activa
+            $hoja = $excel->getActiveSheet();
+            
+            // Dimensionamos las columnas 
+            $hoja->getColumnDimension('A')->setAutoSize(true);
+            $hoja->getColumnDimension('B')->setAutoSize(true);
+            $hoja->getColumnDimension('C')->setAutoSize(true);
+            $hoja->getColumnDimension('D')->setAutoSize(true);
+            $hoja->getColumnDimension('E')->setAutoSize(true);
+            $hoja->getColumnDimension('F')->setAutoSize(true);
+            $hoja->getColumnDimension('G')->setAutoSize(true);
+            $hoja->getColumnDimension('H')->setAutoSize(true);
+            $hoja->getColumnDimension('I')->setAutoSize(true);
+            $hoja->getColumnDimension('J')->setAutoSize(true);
+            $hoja->getColumnDimension('K')->setAutoSize(true);
+
+            // Agregamos algunos datos a la hoja de trabajo
+            $hoja->setCellValue('A1', 'IdPedido');
+            $hoja->setCellValue('B1', 'Tipo Tarta');
+            $hoja->setCellValue('C1', 'Descripción');
+            $hoja->setCellValue('D1', 'Tamaño');
+            $hoja->setCellValue('E1', 'Cantidad');
+            $hoja->setCellValue('F1', 'Fecha');
+            $hoja->setCellValue('G1', 'Correo');
+            $hoja->setCellValue('H1', 'Poblacion');
+            $hoja->setCellValue('I1', 'Provincia');
+            $hoja->setCellValue('J1', 'Direccion');
+            $hoja->setCellValue('K1', 'Telefono');
+
+            $i = 2; // empezamos en la fila 2
+            foreach ($pedidos as $pedido) {
+                $hoja->setCellValue('A' . $i, $pedido->IdPedido);
+                $hoja->setCellValue('B' . $i, $pedido->DescripcionCategoria);
+                $hoja->setCellValue('C' . $i, $pedido->DescripcionArticulo);
+                $hoja->setCellValue('D' . $i, $pedido->Tamanyo);
+                $hoja->setCellValue('E' . $i, $pedido->Cantidad);
+                $hoja->setCellValue('F' . $i, $pedido->FechaRecibirPedido);
+                $hoja->setCellValue('G' . $i, $pedido->Correo);
+                $hoja->setCellValue('H' . $i, $pedido->Poblacion);
+                $hoja->setCellValue('I' . $i, $pedido->Provincia);
+                $hoja->setCellValue('J' . $i, $pedido->Direccion);
+                $hoja->setCellValue('K' . $i, $pedido->Telefono);
+                $i++;
+            }
+            
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($excel, 'Xlsx');
+
+            // Configuramos el encabezado del archivo
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="pedido_'.date('d-m-Y').'.xlsx"');
+            header('Cache-Control: max-age=0');
+            
+            // Escribimos el archivo Excel en la salida de la respuesta HTTP
+            $writer->save('php://output');
+
+            //Mail::to('carlesmorales98@gmail.com')->send(new EmailPedidoExitoso());
+
+            return redirect()->to('/adminPedidos');
         }
 
     // TARTAS

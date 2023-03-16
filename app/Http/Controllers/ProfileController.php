@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Usuarios;
 use App\Http\Request\ProfileRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Models\LineasPedido;
+use App\Models\Pedido;
 
 class ProfileController extends Controller
 {
@@ -17,6 +19,25 @@ class ProfileController extends Controller
         }
 
         return view('auth.profile');
+    }
+
+    public function showPedidos(Request $request)
+    {
+        $pedidoUsuario = Pedido::join('EstadoPedido', 'EstadoPedido.IdEstadoPedido', '=', 'Pedido.Estado')
+        ->where('Pedido.Estado', '!=', '1')
+        ->where('Pedido.IdUsuario', '=', decrypt($request->IdUsuario))
+        ->get();
+        return view('auth.pedidoUsuario', ['pedidoUsuario' => $pedidoUsuario]);
+    }
+
+    public function showDetallePedidos(Request $request, $IdPedido)
+    {
+        $detallePedido = LineasPedido::join('Pedido', 'Pedido.IdPedido', '=', 'LineasPedido.IdPedido')
+        ->join('Articulos', 'Articulos.IdArticulos', '=', 'LineasPedido.IdArticulo')
+        ->join('Categoria', 'Categoria.IdCategoria', '=', 'Articulos.IdCategoria')
+        ->where('LineasPedido.IdPedido', '=', decrypt($request->IdPedido))
+        ->get();
+        return view('auth.detallePedidoUsuario', ['detallePedido' => $detallePedido]);
     }
 
     public function editProfile(Request $request)

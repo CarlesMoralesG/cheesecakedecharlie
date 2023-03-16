@@ -86,6 +86,10 @@ Route::get('/pedidos', [PedidosController::class, 'articulos']);
 Route::get('/profile', [ProfileController::class, 'show'])->name('showProfile');
 Route::post('/profile', [ProfileController::class, 'editProfile'])->name('editProfile');
 
+// Show pedidos usuario
+Route::get('/pedidos/{IdUsuario}', [ProfileController::class, 'showPedidos'])->name('showPedidos');
+Route::get('/detallePedido{IdPedido}', [ProfileController::class, 'showDetallePedidos'])->name('showDetallePedidos');
+
 // Visualizar un Articulo
 Route::get('/articulo/{IdArticulos}', [CompraController::class, 'showArticulo']);
 Route::post('/articulo/{IdArticulos}', [CompraController::class, 'showArticulo']);
@@ -120,6 +124,9 @@ Route::post('/articulo/{IdArticulos}', [CompraController::class, 'showArticulo']
 
         // Delete Pedidos
         Route::get('/deletePedido/{IdPedido}', [AdminController::class, 'deletePedido']);
+
+        // Descargar pedidos por hacer
+        Route::get("/descargarExcel", [AdminController::class, 'descargarExcel'])->name('descargarExcel');
 
         // LINEAS PEDIDOS
 

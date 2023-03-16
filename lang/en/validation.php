@@ -196,7 +196,9 @@ return [
             'max' => 'Has sobrepasado el límite de dígitos permitidos',
             'unique' => 'Este correo ya esta registrado'
         ],
-        
+        'Comentario' => [
+            'max' => 'Has sobrepasado el límite de dígitos permitidos'
+        ]
     ],
 
     /*

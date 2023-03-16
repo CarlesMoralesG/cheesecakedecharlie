@@ -59,6 +59,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <!-- Cerrar sesión -->
                                 <a class="dropdown-item" href="{{ route('showProfile', encrypt(auth()->user()->id)) }}">Perfil</a>
+                                <a class="dropdown-item" href="{{ route('showPedidos', encrypt(auth()->user()->id)) }}">Pedidos</a>
                                 <a class="dropdown-item" href="/cheesecakedecharlie/public/logout">Logout</a>
                             </div>
                             </li>
@@ -97,7 +98,7 @@
                         <div class="col-sm-3 position-relative">
                             <img class="card-img-top"src="{{asset($cesta->Imagen)}}" alt="{!! $cesta->DescripcionArticulo !!}">
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
                             <div class="card-body">
                                 <h5 class="card-title">
                                     <a class="link-dark text-decoration-none"  href="/cheesecakedecharlie/public/articulo/{!! encrypt($cesta->IdArticulos) !!}" >{!! $cesta->DescripcionArticulo !!} </a>
@@ -121,6 +122,11 @@
                                             <option value="9">9</option>
                                             <option value="10">10</option>
                                         </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <br>
+                                        <label for="Comentario">Comentarios / 150 dígitos</label>
+                                        <textarea id="Comentario" name="Comentario" rows="4" cols="40">{!! $cesta->Comentario !!}</textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary" style="margin-left:10px; margin-top:10px;">Guardar</button>
                                 </form>
